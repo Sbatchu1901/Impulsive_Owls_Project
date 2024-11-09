@@ -20,7 +20,9 @@ while True:
                 DB=input('Enter the DB name to create tables:')
                 Create_Tables.creating_tables(DB)
             elif choice in 'iI':
-                quit
+                db=input('Enter the DB name to insert data:')
+                Insert_Data.insert_data_into_tables(db)
+                
             elif choice in 'Bb':
                 continue
             elif choice.lower() not in 'cti':
