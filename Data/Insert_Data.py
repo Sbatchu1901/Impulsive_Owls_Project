@@ -34,8 +34,8 @@ def insert_data_into_tables(db):
             SalesPerson_Email=input('Enter sales person Email ID:')
             conn = sqlite3.connect(db)
             cursor = conn.cursor()
-            cursor.executemany('''
-                INSERT INTO SalesPersons (SalesPersonName, SalesPersonsContact,SalesPersonEmail)
+            cursor.execute('''
+                INSERT INTO SalesPersons (SalesPersonName, SalesPersonContact,SalesPersonEmail)
                 VALUES (?, ?,?)
                  ''', (SalesPerson_Name,SalesPerson_Contact,SalesPerson_Email))
             conn.commit()
@@ -54,12 +54,12 @@ def insert_data_into_tables(db):
             production_Name=input('Enter production name:')
             conn = sqlite3.connect(db)
             cursor = conn.cursor()
-            cursor.executemany('''
+            cursor.execute('''
                 INSERT INTO ProductionTeam (ProductionTeamName)
                 VALUES (?)
-                 ''', (production_Name))
+                 ''', (production_Name,))
             conn.commit()
-            print("Data inserted successfully into all tables.")
+            print("Data inserted successfully into Production Team table.")
         
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")
