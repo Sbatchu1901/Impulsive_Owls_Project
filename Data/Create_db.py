@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+from Data import Create_Tables
+
 def create_sqlite_database(filename):
 
     if os.path.exists(filename):
@@ -14,15 +16,12 @@ def create_sqlite_database(filename):
         except sqlite3.Error as e:
             print(e)
         else:
-            print('Created the database file.')
+            print(f'Created the {filename} database file.')
+            Insert=input(f'Do you want to insert data in {filename} database (yes/no)?')
+            if Insert.lower() in 'yes':
+                Create_Tables.creating_tables(filename)
+            else:
+                quit
         finally:
             if conn:
                 conn.close()
-
-if __name__ == '__main__':
-    create_sqlite_database("POPS.db")
-    #use the os package to verify that my.db file has been created <====  TO DO
-    connection = sqlite3.connect('POPS.db')
-    sql_tables_list = """SELECT name FROM sqlite_master  WHERE type='table';"""
-    my_cursor = connection.execute(sql_tables_list)
-    print(my_cursor.fetchall())
