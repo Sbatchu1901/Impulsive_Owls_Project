@@ -5,8 +5,7 @@ def insert_data_into_tables(db):
     print('=====================================')
     print('Enter I for Inventory Table.')
     print('Enter S for Sales Person Table.')
-    print('Enter P for Production Team Table')
-    choice=input('Enter I or S or P:')
+    choice=input('Enter I or S:')
 
     if choice in 'iI':
         try:
@@ -40,26 +39,6 @@ def insert_data_into_tables(db):
                  ''', (SalesPerson_Name,SalesPerson_Contact,SalesPerson_Email))
             conn.commit()
             print("Data inserted successfully into Sales persons table.")
-        
-        except sqlite3.Error as e:
-            print(f"An error occurred: {e}")
-        
-        finally:
-            if conn:
-                conn.close()
-    
-    elif choice in 'pP':
-        try:
-            
-            production_Name=input('Enter production name:')
-            conn = sqlite3.connect(db)
-            cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO ProductionTeam (ProductionTeamName)
-                VALUES (?)
-                 ''', (production_Name,))
-            conn.commit()
-            print("Data inserted successfully into Production Team table.")
         
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")

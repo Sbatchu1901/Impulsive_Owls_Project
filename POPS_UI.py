@@ -24,7 +24,7 @@ while True:
                 Insert_Data.insert_data_into_tables(db)
                 
             elif choice in 'Bb':
-                continue
+                break
             elif choice.lower() not in 'cti':
                 print('Invalid input.')
                 quit

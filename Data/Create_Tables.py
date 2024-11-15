@@ -6,22 +6,19 @@ def creating_tables(file_name):
             CREATE TABLE if not exists customer (
             CustomerID INTEGER PRIMARY KEY,
             CustomerName TEXT,
-            CustomerPhone INTEGER)
+            CustomerPhone INTEGER, CustomerEmail TEXT)
             """
     customer_orders_table = """
             CREATE TABLE if not exists customer_orders (
             OrderID INTEGER PRIMARY KEY,
             ProductName TEXT,
             Quantity INTEGER,
-            ProductID INTEGER,
             CustomerID INTEGER,
-            SalespersonID INTEGER,
+            ShippingAddress TEXT,
             Status TEXT,
             Shipped TEXT,
             Remarks TEXT,
-            FOREIGN KEY (ProductID) REFERENCES Inventory(ProductID),
-            FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID),
-            FOREIGN KEY (SalespersonID) REFERENCES SalesPersons(SalesPersonID))
+            FOREIGN KEY (CustomerID) REFERENCES customer(CustomerID))
             """
     Inventory_table="""
     CREATE TABLE if not exists Inventory (
@@ -38,19 +35,22 @@ def creating_tables(file_name):
     SalesPersonEmail TEXT)
     """
 
-    ProductionTeam_table="""
-    CREATE TABLE if not exists ProductionTeam (
-    ProductionTeamID INTEGER PRIMARY KEY,
-    ProductionTeamName TEXT)
+    Schedule_Jobs = """
+    CREATE TABLE Schedule_Jobs (
+    ScheduleJobID INTEGER PRIMARY KEY,
+    OrderID INTEGER,
+    Job_Start_Date TEXT,
+    Job_End_Date TEXT,
+    FOREIGN KEY (OrderID) REFERENCES customer_orders(OrderID));
     """
 
-    AssignedOrders_table="""
-    CREATE TABLE if not exists AssignedOrders (
-    ProductionTeamID INTEGER,
-            OrderID INTEGER,
-            FOREIGN KEY (ProductionTeamID) REFERENCES ProductionTeam(ProductionTeamID),
-            FOREIGN KEY (OrderID) REFERENCES orders(OrderID))
-    """
+    Assigned_Orders="""CREATE TABLE Assigned_Orders (
+    AssignedID INTEGER PRIMARY KEY,
+    OrderID INTEGER,
+    SalesPersonID INTEGER,
+    FOREIGN KEY (OrderID) REFERENCES Customer_Orders(OrderID),
+    FOREIGN KEY (SalesPersonID) REFERENCES SalesPersons(SalesPersonID)
+);"""
 
 
     connection = sqlite3.connect(folder_name +'/' + file_name)
@@ -61,8 +61,8 @@ def creating_tables(file_name):
         cursor.execute(customer_orders_table)
         cursor.execute(Inventory_table)
         cursor.execute(SalesPerson_table)
-        cursor.execute(ProductionTeam_table)
-        cursor.execute(AssignedOrders_table)
+        cursor.execute(Schedule_Jobs)
+        cursor.execute(Assigned_Orders)
         connection.commit()
         print('Inside try')
     except sqlite3.Error as e:
