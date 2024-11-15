@@ -1,5 +1,6 @@
 import os
 from Data import Create_db, Create_Tables, Insert_Data
+import POPS_Functions
 
 while True:
     print('D for Database access.')
@@ -29,7 +30,24 @@ while True:
                 print('Invalid input.')
                 quit
     elif choice in 'uU':
-        quit
+        while True:
+            print('C for Clerck Access.')
+            print('W for Warehouse Manager Access.')
+            choice=input('Enter your role for access:')
+            if choice in 'cC':
+                print('R for Registering the New Customer.')
+                print('T for Take Order.')
+                print('A for Assign Order to Sales Person.')
+                Clerk_choice=input('Enter R or T or A  to perform action:')
+                if Clerk_choice in 'rR':
+                    POPS_Functions.Register_Customer()
+                elif Clerk_choice in 'tT':
+                    POPS_Functions.Customer_Order()
+
+            elif choice in 'wW':
+                print('')
+                print('')
+
     else:
         break
 

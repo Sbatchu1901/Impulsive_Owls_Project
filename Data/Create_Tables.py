@@ -11,6 +11,7 @@ def creating_tables(file_name):
     customer_orders_table = """
             CREATE TABLE if not exists customer_orders (
             OrderID INTEGER PRIMARY KEY,
+            OrderDate TEXT,
             ProductName TEXT,
             Quantity INTEGER,
             CustomerID INTEGER,
