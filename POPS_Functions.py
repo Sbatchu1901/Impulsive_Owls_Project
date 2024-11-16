@@ -131,3 +131,16 @@ def Assigned_Orders():
             if conn:
                 conn.close()
 
+
+def warehouse_Manager():
+    print('  ')
+    print('  ')
+    conn= sqlite3.connect('POPS.db')
+    cursor = conn.cursor()
+    print('   ')
+    print('   ')
+    print('List of Orders:')
+    cursor.execute('SELECT * FROM customer_orders')
+    rows = cursor.fetchall()
+    headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
+    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))

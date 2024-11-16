@@ -47,8 +47,16 @@ while True:
                     POPS_Functions.Assigned_Orders()
 
             elif choice in 'wW':
-                print('')
-                print('')
+                while True:
+                    Read_Order=input('Enter (R) to read all the Orders:')
+                    if Read_Order in 'rR':
+                        POPS_Functions.warehouse_Manager()
+                        break
+                    else:
+                        break
+            break
+                
+
 
     else:
         break
