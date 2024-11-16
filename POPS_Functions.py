@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date
 from tabulate import tabulate
+import pandas as pd
 
 def Register_Customer():
     try:
@@ -72,3 +73,35 @@ def Customer_Order():
     finally:
         if conn:
             conn.close()
+
+def Assigned_Orders():
+    conn= sqlite3.connect('POPS.db')
+    cursor = conn.cursor()
+    print('List of Orders:')
+    cursor.execute('SELECT * FROM customer_orders where Status=?',('Open',))
+    rows = cursor.fetchall()
+    headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
+
+    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+    print('  ')
+    print('  ')
+    print('  ')
+    print('List of Sales Persons:')
+    cursor.execute('SELECT * FROM SalesPersons')
+    rows = cursor.fetchall()
+    headers=['Sales Person ID',  'Sales Person Name', 'Sales Person Contact','Sales Person Email']
+
+    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+    print('   ')
+    print('   ')
+    print('   ')
+
+    OrderIs=input('Order ID is:')
+    AssignedTo=input('Assigned to sales person ID:')
+    cursor.execute("""INSERT INTO Assigned_Orders (OrderID, SalesPersonID) VALUES (?,?)""",
+                (OrderIs,AssignedTo))
+    conn.commit()
+    print('-----------------------------------------')
+    print(f'Order {OrderIs} is successfully assigned to {AssignedTo}')
+    print('-----------------------------------------')
+

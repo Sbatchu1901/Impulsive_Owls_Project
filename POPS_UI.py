@@ -36,13 +36,15 @@ while True:
             choice=input('Enter your role for access:')
             if choice in 'cC':
                 print('R for Registering the New Customer.')
-                print('T for Take Order.')
+                print('T for Take Order and keep status is open.')
                 print('A for Assign Order to Sales Person.')
                 Clerk_choice=input('Enter R or T or A  to perform action:')
                 if Clerk_choice in 'rR':
                     POPS_Functions.Register_Customer()
                 elif Clerk_choice in 'tT':
                     POPS_Functions.Customer_Order()
+                elif Clerk_choice in 'aA':
+                    POPS_Functions.Assigned_Orders()
 
             elif choice in 'wW':
                 print('')
