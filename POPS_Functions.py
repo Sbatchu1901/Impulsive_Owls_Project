@@ -5,9 +5,11 @@ import pandas as pd
 
 def Register_Customer():
     try:
-        
+        print('------------------')
         Customer_Name=input('Customer Name:')
+        print('------------------')
         Customer_Phone=input('Customer Phone:')
+        print('------------------')
         Customer_Email=input('Customer Email:')
         
         conn= sqlite3.connect('POPS.db')
@@ -42,14 +44,18 @@ def Customer_Order():
 
         print(tabulate(rows, headers=headers, tablefmt="grid"))
 
-
+        print('------------------')
         Product_Name=input('Product Name:')
+        print('------------------')
         Order_Quantity=input('Order Quantity:')
+        print('------------------')
         CustomerID=input('Customer ID:')
+        print('------------------')
         Shipping_Address=input('Shipping Address:')
         Status='Open'
         Shipped='No'
         Order_Date=date.today()
+        print('------------------')
         Remarks=input('Any remarks:')
 
         cursor.execute("""INSERT INTO customer_orders(OrderDate, ProductName, Quantity, CustomerID, ShippingAddress, Status, Shipped, Remarks) 
@@ -113,6 +119,7 @@ def Assigned_Orders():
                     print('-----------------------------------------')
                     print(f'Order {OrderIs} is successfully assigned to {AssignedTo}')
                     print('-----------------------------------------')
+                    break
                 else:
                     print('-----------------------------------------')
                     print(f'Provided sales person ID {AssignedTo}  is not in our records.\n Please check and try again.')

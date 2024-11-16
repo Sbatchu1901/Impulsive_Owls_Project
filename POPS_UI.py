@@ -9,6 +9,7 @@ while not outer_Break:
     print('D for Database access.')
     print('U for User access.')
     print('Q for quit.')
+    print('------------------')
     choice=input('Enter D or U or Q:')
     if choice is not None and choice and choice in 'Dd':
         while True:
@@ -18,6 +19,7 @@ while not outer_Break:
             print('I for Insert Tables.')
             print('B for Back to Main Menu.')
             print('Q for Quit the process.')
+            print('------------------------------')
             choice=input('Enter C or T or I or B or Q:')
             if choice is not None and choice and choice in 'cC':
                 DB=input('Enter the Database name to create:')
@@ -40,20 +42,23 @@ while not outer_Break:
                 continue
     elif choice is not None and choice and choice in 'uU':
         while True:
+            print('_______________________________')
             print('C for Clerck Access.')
             print('W for Warehouse Manager Access.')
             print('B for Back to Main Menu.')
             print('Q for Quit the process.')
+            print('--------------------------')
             choice=input('Enter your role for access:')
             
             if choice is not None and choice and choice in 'cC':
+                print('_________________________________________')
                 print('R for Registering the New Customer.')
                 print('T for Take Order and keep status is open.')
                 print('A for Assign Order to Sales Person.')
                 print('B for Back to Main Menu.')
                 print('Q for Quit the process.')
-
-                Clerk_choice=input('Enter R or T or A B or Q to perform action:')
+                print('---------------------------------------')
+                Clerk_choice=input('Enter R or T or A or B or Q to perform action:')
                 if Clerk_choice is not None and Clerk_choice and Clerk_choice in 'rR':
                     POPS_Functions.Register_Customer()
                 elif Clerk_choice is not None and Clerk_choice and Clerk_choice in 'tT':
@@ -71,6 +76,7 @@ while not outer_Break:
 
             elif choice is not None and choice and choice in 'wW':
                 while True:
+                    print('---------------------------------')
                     Read_Order=input('Enter (R) to read all the Orders:')
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
