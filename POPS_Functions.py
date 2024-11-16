@@ -11,16 +11,11 @@ def Register_Customer():
         Customer_Phone=input('Customer Phone:')
         print('------------------')
         Customer_Email=input('Customer Email:')
-        
         conn= sqlite3.connect('POPS.db')
-
         cursor = conn.cursor()
-
         cursor.execute('INSERT INTO customer (CustomerName, CustomerPhone, CustomerEmail) VALUES (?,?,?)',
                        (Customer_Name,Customer_Phone,Customer_Email))
         conn.commit()
-        
-
         cursor.execute('SELECT CustomerID from customer ORDER BY CustomerID DESC LIMIT 1')
         Customer_ID = cursor.fetchone()[0]
         print('-------------------------------------------------------------')
