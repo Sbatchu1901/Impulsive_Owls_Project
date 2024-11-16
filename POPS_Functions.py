@@ -75,33 +75,59 @@ def Customer_Order():
             conn.close()
 
 def Assigned_Orders():
-    conn= sqlite3.connect('POPS.db')
-    cursor = conn.cursor()
-    print('List of Orders:')
-    cursor.execute('SELECT * FROM customer_orders where Status=?',('Open',))
-    rows = cursor.fetchall()
-    headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
+    while True:
+        try:
+            conn= sqlite3.connect('POPS.db')
+            cursor = conn.cursor()
+            print('   ')
+            print('   ')
+            print('List of Orders:')
+            cursor.execute('SELECT * FROM customer_orders where Status=?',('Open',))
+            rows = cursor.fetchall()
+            headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
 
-    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
-    print('  ')
-    print('  ')
-    print('  ')
-    print('List of Sales Persons:')
-    cursor.execute('SELECT * FROM SalesPersons')
-    rows = cursor.fetchall()
-    headers=['Sales Person ID',  'Sales Person Name', 'Sales Person Contact','Sales Person Email']
+            print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+            print('  ')
+            print('  ')
+            print('List of Sales Persons:')
+            cursor.execute('SELECT * FROM SalesPersons')
+            rows = cursor.fetchall()
+            headers=['Sales Person ID',  'Sales Person Name', 'Sales Person Contact','Sales Person Email']
 
-    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
-    print('   ')
-    print('   ')
-    print('   ')
+            print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+            print('   ')
+            print('   ')
 
-    OrderIs=input('Order ID is:')
-    AssignedTo=input('Assigned to sales person ID:')
-    cursor.execute("""INSERT INTO Assigned_Orders (OrderID, SalesPersonID) VALUES (?,?)""",
-                (OrderIs,AssignedTo))
-    conn.commit()
-    print('-----------------------------------------')
-    print(f'Order {OrderIs} is successfully assigned to {AssignedTo}')
-    print('-----------------------------------------')
+            OrderIs=input('Order ID is:')
+            
+            cursor.execute('SELECT OrderID from customer_orders where OrderID=?',(OrderIs,))
+            Order_ID = cursor.fetchone()
+            if Order_ID is not None and int(Order_ID[0]) == int(OrderIs):
+                AssignedTo=input('Assigned to sales person ID:')
+                cursor.execute('SELECT SalesPersonID from SalesPersons where SalesPersonID=?',(AssignedTo,))
+                salespersonID = cursor.fetchone()
+                if salespersonID is not None and int(salespersonID[0]) == int(AssignedTo):
+                    cursor.execute("""INSERT INTO Assigned_Orders (OrderID, SalesPersonID) VALUES (?,?)""",
+                                (OrderIs,AssignedTo))
+                    conn.commit()
+                    print('-----------------------------------------')
+                    print(f'Order {OrderIs} is successfully assigned to {AssignedTo}')
+                    print('-----------------------------------------')
+                else:
+                    print('-----------------------------------------')
+                    print(f'Provided sales person ID {AssignedTo}  is not in our records.\n Please check and try again.')
+                    print('-----------------------------------------')
+                    continue
+            else:
+                print('-----------------------------------------')
+                print(f'Provided Order ID {OrderIs} is not in our records.\n Please check and try again.')
+                print('-----------------------------------------')
+                continue
+
+        except sqlite3.Error as e:
+                print(f"An error occurred: {e}")
+                
+        finally:
+            if conn:
+                conn.close()
 
