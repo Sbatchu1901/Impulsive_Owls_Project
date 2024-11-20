@@ -76,12 +76,23 @@ while not outer_Break:
 
             elif choice is not None and choice and choice in 'wW':
                 while True:
+                    print('_________________________________________')
+                    print('R for retrieving all the Orders')
+                    print('O for retrieving all Open Orders')
+                    print('V for Verifying the Inventory')
+                    print('S for scheduling jobs')
+                    print('U for updating order status')
                     print('---------------------------------')
-                    Read_Order=input('Enter (R) to read all the Orders:')
+                    Read_Order=input('Enter R or O or V or S or U ')
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
-                        break
+                    elif Read_Order is not None and Read_Order and Read_Order in 'oO':
+
+                            print('Retrieving open orders in a moment...')
+                            POPS_Functions.Open_orders()
+                            break 
                     else:
+                        print('Invalid input. Please enter (R) to read all the orders')
                         break
             elif choice is not None and choice and choice in 'Bb':
                 break

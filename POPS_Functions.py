@@ -139,10 +139,44 @@ def warehouse_Manager():
     print('  ')
     conn= sqlite3.connect('POPS.db')
     cursor = conn.cursor()
-    print('   ')
-    print('   ')
-    print('List of Orders:')
-    cursor.execute('SELECT * FROM customer_orders')
-    rows = cursor.fetchall()
-    headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
-    print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+    try:
+        print('   ')
+        print('   ')
+        print('List of Orders:')
+        cursor.execute('SELECT * FROM customer_orders')
+        rows = cursor.fetchall()
+        headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
+        print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+        if not rows:
+         print('No  orders found.')
+         return
+    
+    except sqlite3 as e:
+        print('No orders found.')
+
+    finally:
+        if conn:
+            conn.close()
+
+def Open_orders():
+    print('    ')
+    print('    ')
+    conn= sqlite3.connect('POPS.db')
+    cursor= conn.cursor()
+    try:
+        print('List of Open orders:')
+        cursor.execute("SELECT * FROM Customer_orders WHERE status = 'Open'")
+        rows = cursor.fetchall()
+        headers= ['Order ID', 'Order Date', 'Product Name', 'Quantity', 'Customer ID', 'Shipping Address', 'Status', 'shipped', 'Remarks']
+        print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+        if not rows:
+            print('No open orders found')
+            return
+    
+    except sqlite3.Error as e:
+        print()(f"An error occurred: {e}")
+
+    finally:
+        if conn:
+            conn.close()
+
