@@ -83,7 +83,7 @@ while not outer_Break:
                     print('S for scheduling jobs')
                     print('U for updating order status')
                     print('---------------------------------')
-                    Read_Order=input('Enter R or O or V or S or U ')
+                    Read_Order=input('Enter R or O or V or S or U: ')
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
                     elif Read_Order is not None and Read_Order and Read_Order in 'oO':
