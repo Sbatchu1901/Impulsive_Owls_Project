@@ -87,10 +87,14 @@ while not outer_Break:
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
                     elif Read_Order is not None and Read_Order and Read_Order in 'oO':
-
-                            print('Retrieving open orders in a moment...')
-                            POPS_Functions.Open_orders()
-                            break 
+                        print('Retrieving open orders in a moment...')
+                        POPS_Functions.Open_orders()
+                    elif Read_Order is not None and Read_Order and Read_Order in 'vV':
+                        POPS_Functions.Verify_stock()
+                    elif Read_Order is not None and Read_Order and Read_Order in 'sS':
+                        POPS_Functions.Schedule_Jobs()
+                    elif Read_Order is not None and Read_Order and Read_Order in 'sS':
+                        POPS_Functions.Update_Status()
                     else:
                         print('Invalid input. Please enter (R) to read all the orders')
                         break

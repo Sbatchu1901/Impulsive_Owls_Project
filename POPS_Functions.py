@@ -180,3 +180,39 @@ def Open_orders():
         if conn:
             conn.close()
 
+
+
+def Verify_stock():
+    print('Verifying stock for open orders.....')
+    conn= sqlite3.connect('POPS.db')
+    cursor= conn.cursor()
+    try:
+        print('List of Open orders:')
+        cursor.execute("SELECT OrderID, ProductName, Quantity FROM Customer_orders WHERE status = 'Open'")
+        rows = cursor.fetchall()
+        headers= ['Order ID', 'Product Name', 'Quantity']
+
+        cursor.execute("SELECT * FROM Inventory")
+        inventory_rows=cursor.fetchall()
+        inventory_headers=['Product ID', 'Product Name', 'Product Stock']
+        print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
+        print(tabulate(pd.DataFrame(inventory_rows, columns=inventory_headers),headers='keys',tablefmt='grid',showindex=False))
+
+
+        if not rows:
+            print('No open orders found')
+            return
+    
+    except sqlite3.Error as e:
+        print()(f"An error occurred: {e}")
+
+    finally:
+        if conn:
+            conn.close()
+
+
+def Schedule_Jobs():
+    print('Scheduling jobs...')
+
+def Update_Status():
+    print('Update status...')
