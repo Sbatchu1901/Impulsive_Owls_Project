@@ -77,13 +77,14 @@ while not outer_Break:
             elif choice is not None and choice and choice in 'wW':
                 while True:
                     print('_________________________________________')
-                    print('R for retrieving all the Orders')
-                    print('O for retrieving all Open Orders')
-                    print('V for Verifying the Inventory')
-                    print('S for scheduling jobs')
-                    print('U for updating order status')
+                    print('R for retrieving all the Orders.')
+                    print('O for retrieving all Open Orders.')
+                    print('V for Verifying the Inventory.')
+                    print('S for scheduling jobs.')
+                    print('U for updating order status.')
+                    print('B for Back to menu.')
                     print('---------------------------------')
-                    Read_Order=input('Enter R or O or V or S or U: ')
+                    Read_Order=input('Enter R or O or V or S or U or B: ')
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
                     elif Read_Order is not None and Read_Order and Read_Order in 'oO':
@@ -95,9 +96,12 @@ while not outer_Break:
                         POPS_Functions.Schedule_Jobs()
                     elif Read_Order is not None and Read_Order and Read_Order in 'sS':
                         POPS_Functions.Update_Status()
-                    else:
-                        print('Invalid input. Please enter (R) to read all the orders')
+                    elif Read_Order is not None and Read_Order and Read_Order in 'bB':
                         break
+                    else:
+                        print('---------------------------------------------')
+                        print('Invalid input. Please select from above menu.')
+                        continue
             elif choice is not None and choice and choice in 'Bb':
                 break
             elif choice is not None and choice and choice in 'qQ':
