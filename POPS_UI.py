@@ -80,8 +80,7 @@ while not outer_Break:
                     print('R for retrieving all the Orders.')
                     print('O for retrieving all Open Orders.')
                     print('V for Verifying the Inventory.')
-                    print('S for scheduling jobs.')
-                    print('U for updating order status.')
+                    print('S for scheduling jobs and update order status to In Production.')
                     print('B for Back to menu.')
                     print('---------------------------------')
                     Read_Order=input('Enter R or O or V or S or U or B: ')
@@ -93,9 +92,7 @@ while not outer_Break:
                     elif Read_Order is not None and Read_Order and Read_Order in 'vV':
                         POPS_Functions.Verify_stock()
                     elif Read_Order is not None and Read_Order and Read_Order in 'sS':
-                        POPS_Functions.Schedule_Jobs()
-                    elif Read_Order is not None and Read_Order and Read_Order in 'sS':
-                        POPS_Functions.Update_Status()
+                        POPS_Functions.Schedule_and_UpdateStatus()
                     elif Read_Order is not None and Read_Order and Read_Order in 'bB':
                         break
                     else:

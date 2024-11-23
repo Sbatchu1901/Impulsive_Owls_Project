@@ -1,7 +1,9 @@
 import sqlite3
-from datetime import date
+from datetime import datetime
 from tabulate import tabulate
 import pandas as pd
+import datetime
+from datetime import date
 
 def Register_Customer():
     try:
@@ -237,9 +239,79 @@ def Verify_stock():
 
 
 
+def Schedule_and_UpdateStatus():
+    conn = sqlite3.connect('POPS.db')
+    cursor = conn.cursor()
 
-def Schedule_Jobs():
-    print('Scheduling jobs...')
+    try:
+        # Display Open Orders for reference
+        print("Fetching all open orders...")
+        cursor.execute("SELECT * FROM customer_orders WHERE Status = 'Open'")
+        orders = cursor.fetchall()
+        if not orders:
+            print("No open orders available for scheduling.")
+            return
+        headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity', 'Customer ID', 'Shipping Address', 'Status', 'Shipped', 'Remarks']
+        print(tabulate(orders, headers=headers, tablefmt="grid"))
+    
+        
+        while True:
+            try:
+                Order_Id = int(input("Enter Order ID to assign the job: "))
+                cursor.execute("SELECT * FROM customer_orders WHERE OrderID = ? AND Status = 'Open'", (Order_Id,))
+                order = cursor.fetchone()
+                if not order:
+                    print(f"No open order found with ID {Order_Id}. Please enter a valid Order ID.")
+                    continue
+                break
+            except ValueError:
+                print("Invalid input. Please enter a numeric Order ID.")
 
-def Update_Status():
-    print('Update status...')
+        # Input and validate Start and End Dates
+        while True:
+            Start_Date = input("Enter Start Date (YYYY-MM-DD): ")
+            End_Date = input("Enter End Date (YYYY-MM-DD): ")
+            try:
+                current_date = date.today()
+                start_date = datetime.datetime.strptime(Start_Date, "%Y-%m-%d")
+                end_date = datetime.datetime.strptime(End_Date, "%Y-%m-%d")
+                if start_date > end_date and  Start_Date < current_date:
+                    print("Start date cannot be later than the end date. Please try again.")
+                    continue
+                break
+            except ValueError:
+                print("Invalid date format. Please enter dates in YYYY-MM-DD format.")
+
+        
+        cursor.execute(
+            """INSERT INTO Schedule_Jobs (OrderID, Job_Start_Date, Job_End_Date)
+               VALUES (?, ?, ?)""",
+            (Order_Id, Start_Date, End_Date,)
+        )
+        conn.commit()
+
+        # Update the order status in customer_orders
+        cursor.execute("UPDATE customer_orders SET Status = 'In Production' WHERE OrderID = ?", (Order_Id,))
+        conn.commit()
+
+        print(f"Job successfully scheduled for Order ID {Order_Id} from {Start_Date} to {End_Date}.")
+        print('Order is Updated to In Production')
+
+        cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status  FROM customer_orders WHERE Status= 'In Production'")
+        Records = cursor.fetchall()
+        if not Records:
+            print("No open orders available for scheduling.")
+            return
+        headers = ['Order ID', 'Order Date', 'Product Name',  'Status']
+        print(tabulate(Records, headers=headers, tablefmt="grid"))
+        
+
+    except sqlite3.Error as e:
+        print(f"An error occurred while scheduling the job: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+
+
+
