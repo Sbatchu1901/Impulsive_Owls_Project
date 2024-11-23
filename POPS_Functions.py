@@ -185,6 +185,7 @@ def Open_orders():
 
 def Verify_stock():
     print('Verifying stock for open orders.....')
+    print('------------------------------------')
     conn = sqlite3.connect('POPS.db')
     cursor = conn.cursor()
     try:
@@ -216,6 +217,7 @@ def Verify_stock():
         headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity']
 
         print('Orders with Sufficient Stock:')
+        print('-----------------------------')
         if sufficient_inventory:
             print(tabulate(pd.DataFrame(sufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
         else:
@@ -223,6 +225,7 @@ def Verify_stock():
 
         print('   ')
         print('Orders with Insufficient Stock:')
+        print('-------------------------------')
         if insufficient_inventory:
             print(tabulate(pd.DataFrame(insufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
         else:
