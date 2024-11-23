@@ -186,74 +186,47 @@ def Verify_stock():
     conn = sqlite3.connect('POPS.db')
     cursor = conn.cursor()
     try:
-        print('List of Open orders:')
         
-        cursor.execute("SELECT OrderID, ProductName, Quantity FROM customer_orders WHERE status = 'Open'")
-        rows = cursor.fetchall()
-        headers = ['OrderID', 'ProductName', 'Quantity']
+        cursor.execute("SELECT OrderID, OrderDate, ProductName, Quantity FROM customer_orders WHERE Status = 'Open'")
+        orders = cursor.fetchall()
 
-        
-        cursor.execute("SELECT * FROM Inventory")
-        inventory_rows = cursor.fetchall()
-        inventory_headers = ['ProductID', 'ProductName', 'StockQuantity']
-
-        
-        customer_orders_df = pd.DataFrame(rows, columns=headers)
-        product_inventory_df = pd.DataFrame(inventory_rows, columns=inventory_headers)
-
-        
-        customer_orders_df['ProductName'] = customer_orders_df['ProductName'].str.lower()
-        product_inventory_df['ProductName'] = product_inventory_df['ProductName'].str.lower()
-
-        
-        print("Inventory:")
-        print(tabulate(product_inventory_df, headers='keys', tablefmt='grid', showindex=False))
-        print("\nCustomer Orders:")
-        print(tabulate(customer_orders_df, headers='keys', tablefmt='grid', showindex=False))
-
-        if customer_orders_df.empty:
-            print('No open orders found')
+        if not orders:
+            print('No open orders found.')
             return
 
-        
-        order_availability = pd.merge(customer_orders_df, product_inventory_df, on='ProductName', how='left')
+        sufficient_inventory = []
+        insufficient_inventory = []
 
-        
-        order_availability['StockAvailable'] = order_availability['StockQuantity'] - order_availability['Quantity']
-        order_availability['IsAvailable'] = order_availability['StockAvailable'] >= 0
+        for order in orders:
+            order_id = order[0]
+            product_name = order[2]
+            required_quantity = order[3]
 
-       
-        order_availability['IsAvailable'] = order_availability['IsAvailable'].fillna(False)
-        order_availability['StockAvailable'] = order_availability['StockAvailable'].fillna("Not in Inventory")
+            cursor.execute("SELECT productStock FROM Inventory WHERE LOWER(ProductName) = LOWER(?)", (product_name,))
+            stock = cursor.fetchone()
 
-        
-        def categorize_availability(row):
-            if pd.isna(row['StockQuantity']):
-                return "Not in Inventory"
-            return "Available" if row['IsAvailable'] else "Unavailable"
+            if stock and stock[0] >= required_quantity:
+                sufficient_inventory.append(order)
+            else:
+                insufficient_inventory.append(order)
 
-        order_availability['Status'] = order_availability.apply(categorize_availability, axis=1)
+        # Display results
+        headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity']
 
-       
-        total_orders = len(order_availability)
-        available_orders = len(order_availability[order_availability['Status'] == "Available"])
-        unavailable_orders = len(order_availability[order_availability['Status'] == "Unavailable"])
-        not_in_inventory_orders = len(order_availability[order_availability['Status'] == "Not in Inventory"])
+        print('Orders with Sufficient Stock:')
+        if sufficient_inventory:
+            print(tabulate(pd.DataFrame(sufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
+        else:
+            print('No orders with sufficient Stock.')
 
-        summary = {
-            "Total Orders": total_orders,
-            "Available Orders": available_orders,
-            "Unavailable Orders": unavailable_orders,
-            "Orders Not in Inventory": not_in_inventory_orders
-        }
+        print('   ')
+        print('Orders with Insufficient Stock:')
+        if insufficient_inventory:
+            print(tabulate(pd.DataFrame(insufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
+        else:
+            print('No orders with insufficient Stock.')
 
-        
-        categorized_orders = order_availability[['OrderID', 'ProductName', 'Quantity', 'Status', 'StockAvailable']]
-        print("\nCategorized Orders:")
-        print(tabulate(categorized_orders, headers='keys', tablefmt='grid', showindex=False))
 
-        print("\nSummary:")
-        print(summary)
 
     except sqlite3.Error as e:
         print(f"An error occurred: {e}")
