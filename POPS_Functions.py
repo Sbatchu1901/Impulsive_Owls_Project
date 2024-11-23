@@ -273,10 +273,13 @@ def Schedule_and_UpdateStatus():
             End_Date = input("Enter End Date (YYYY-MM-DD): ")
             try:
                 current_date = date.today()
-                start_date = datetime.datetime.strptime(Start_Date, "%Y-%m-%d")
-                end_date = datetime.datetime.strptime(End_Date, "%Y-%m-%d")
-                if start_date > end_date and  Start_Date < current_date:
+                start_date = datetime.datetime.strptime(Start_Date, "%Y-%m-%d").date()
+                end_date = datetime.datetime.strptime(End_Date, "%Y-%m-%d").date()
+                if start_date > end_date:
                     print("Start date cannot be later than the end date. Please try again.")
+                    continue
+                if start_date < current_date:
+                    print('Start date cannot be in the past. Please try again.')
                     continue
                 break
             except ValueError:
