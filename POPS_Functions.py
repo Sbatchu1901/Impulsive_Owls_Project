@@ -212,7 +212,7 @@ def Verify_stock():
             else:
                 insufficient_inventory.append(order)
 
-        # Display results
+        
         headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity']
 
         print('Orders with Sufficient Stock:')
@@ -244,7 +244,7 @@ def Schedule_and_UpdateStatus():
     cursor = conn.cursor()
 
     try:
-        # Display Open Orders for reference
+        
         print("Fetching all open orders...")
         cursor.execute("SELECT * FROM customer_orders WHERE Status = 'Open'")
         orders = cursor.fetchall()
@@ -267,7 +267,7 @@ def Schedule_and_UpdateStatus():
             except ValueError:
                 print("Invalid input. Please enter a numeric Order ID.")
 
-        # Input and validate Start and End Dates
+        
         while True:
             Start_Date = input("Enter Start Date (YYYY-MM-DD): ")
             End_Date = input("Enter End Date (YYYY-MM-DD): ")
@@ -277,13 +277,16 @@ def Schedule_and_UpdateStatus():
                 end_date = datetime.datetime.strptime(End_Date, "%Y-%m-%d").date()
                 if start_date > end_date:
                     print("Start date cannot be later than the end date. Please try again.")
+                    print('---------------------------------------------------------------')
                     continue
                 if start_date < current_date:
                     print('Start date cannot be in the past. Please try again.')
+                    print('---------------------------------------------------')
                     continue
                 break
             except ValueError:
                 print("Invalid date format. Please enter dates in YYYY-MM-DD format.")
+                print('-------------------------------------------------------------')
 
         
         cursor.execute(
@@ -293,7 +296,7 @@ def Schedule_and_UpdateStatus():
         )
         conn.commit()
 
-        # Update the order status in customer_orders
+        
         cursor.execute("UPDATE customer_orders SET Status = 'In Production' WHERE OrderID = ?", (Order_Id,))
         conn.commit()
 
