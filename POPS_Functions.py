@@ -213,7 +213,7 @@ def Verify_stock():
             else:
                 insufficient_inventory.append(order)
 
-        
+
         headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity']
 
         print('Orders with Sufficient Stock:')
