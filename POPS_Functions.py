@@ -323,4 +323,64 @@ def Schedule_and_UpdateStatus():
 
 
 
+def Order_Shipped():
+        try:
+            conn= sqlite3.connect('POPS.db')
+            cursor = conn.cursor()
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Status= 'In Production'")
+            Records = cursor.fetchall()
+            if not Records:
+                print("No In Production orders available for Shipped.")
+                return
+            headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
+            print(tabulate(Records, headers=headers, tablefmt="grid"))
+            Order_ID=input('Enter order id to be shipped:')
+            cursor.execute("UPDATE customer_orders SET Shipped = 'Yes' WHERE OrderID = ?", (Order_ID,))
+            conn.commit()
+            print('-----------------------------------------')
+            print(f" Order {Order_ID} is Successfully Shipped! ")
+            print('-----------------------------------------')
+
+        except sqlite3.Error as e:
+                print(f"An error occurred: {e}")
+            
+        finally:
+                if conn:
+                    conn.close()
+
+
+
+
+
+def Order_Closed():
+        try:
+            conn= sqlite3.connect('POPS.db')
+            cursor = conn.cursor()
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes'")
+            Records = cursor.fetchall()
+            if not Records:
+                print("No Shipped orders available to close order.")
+                return
+            headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
+            print(tabulate(Records, headers=headers, tablefmt="grid"))
+            Order_ID=input('Enter order id to be shipped:')
+            cursor.execute("UPDATE customer_orders SET Status = 'Closed' WHERE OrderID = ?", (Order_ID,))
+            conn.commit()
+            print('-----------------------------------------')
+            print(f" Order {Order_ID} is Successfully Closed! ")
+            print('-----------------------------------------')
+
+        except sqlite3.Error as e:
+                print(f"An error occurred: {e}")
+            
+        finally:
+                if conn:
+                    conn.close()
+
+
+
+
+def Initiate_Billing():
+    print('')
+
 
