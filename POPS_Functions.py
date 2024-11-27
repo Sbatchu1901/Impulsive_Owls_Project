@@ -404,7 +404,7 @@ def Initiate_Billing():
         try:
             conn= sqlite3.connect('POPS.db')
             cursor = conn.cursor()
-            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'Closed'")
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Quantity, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'Closed'")
             Records = cursor.fetchall()
             if Records:
                 cursor.execute(" SELECT OrderID FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'Closed'")
@@ -413,10 +413,11 @@ def Initiate_Billing():
             else:
                 print("No Shipped orders available to close order.")
                 return
-            headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
+            headers = ['Order ID', 'Order Date', 'Product Name', 'Quantity', 'Status', 'Shipped']
             print(tabulate(Records, headers=headers, tablefmt="grid"))
             
             Order_ID=input('Enter order id to initiate bill:')
+            print('----------------------------------')
             if Order_ID in RecordsIDs:
                 cursor.execute("SELECT ProductName FROM customer_orders WHERE OrderID=?",(Order_ID,))
                 product_Name = cursor.fetchone()[0]
@@ -424,12 +425,18 @@ def Initiate_Billing():
                 Quantity = cursor.fetchone()[0]
                 cursor.execute("SELECT Price_per_unit FROM Inventory WHERE LOWER(ProductName) = LOWER(?)", (product_Name,))
                 price = cursor.fetchone()[0]
-
-                print(price)
-            
+                item_total= Quantity*price
+                print(f'{Quantity}x{product_Name}- ${price}={item_total}')
+                tax= item_total *0.07
+                grand_total= item_total+tax
+                print(f'Subtotal: ${item_total:.2f}')
+                print(f'Tax (7%): ${tax:.2f}')
+                print('--------------------')
+                print(f'Grand Total: ${grand_total:.2f}')            
                 print('-----------------------------------------')
                 print(f" Order {Order_ID} is Successfully Bill initiated! ")
                 print('-----------------------------------------')
+                print(f'Bill Amount is {grand_total:.2f}')
             else:
                 print('------------------')
                 print('Id does not exists')
