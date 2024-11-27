@@ -25,7 +25,8 @@ def creating_tables(file_name):
     CREATE TABLE if not exists Inventory (
     ProductID INTEGER PRIMARY KEY,
     ProductName TEXT,
-    productStock INTEGER)
+    productStock INTEGER,
+    Price_per_unit REAL)
     """
 
     SalesPerson_table="""

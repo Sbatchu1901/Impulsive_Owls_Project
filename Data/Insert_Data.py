@@ -12,9 +12,10 @@ def insert_data_into_tables(db):
             
             product_Name=input('Enter product name:')
             product_stock=input('Enter the stock of product:')
+            price=input('Enter the price per unit:')
             conn = sqlite3.connect(db)
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO Inventory (ProductName, productStock) VALUES (?, ?)'
+            cursor.execute('INSERT INTO Inventory (ProductName, productStock, Price_per_unit) VALUES (?, ?, ?)'
                 , (product_Name,product_stock))
             conn.commit()
             print("Data inserted successfully into inventory table.")
