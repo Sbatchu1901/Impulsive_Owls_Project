@@ -81,7 +81,7 @@ while not outer_Break:
                     print('O for retrieving all Open Orders.')
                     print('V for Verifying the stock in Inventory.')
                     print('S for scheduling jobs and update order status to In Production.')
-                    print('U for update order status to shipped.')
+                    print('U for update shipment status to YES.')
                     print('C for update order status to closed.')
                     print('I for initiate the billing process.')
                     print('B for Back to menu.')
