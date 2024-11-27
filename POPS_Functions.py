@@ -327,19 +327,28 @@ def Order_Shipped():
         try:
             conn= sqlite3.connect('POPS.db')
             cursor = conn.cursor()
-            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Status= 'In Production'")
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Status= 'In Production' AND Shipped= 'No'")
             Records = cursor.fetchall()
-            if not Records:
+            if Records:
+                cursor.execute(" SELECT OrderID FROM customer_orders WHERE Shipped= 'No' AND Status= 'In Production'")
+                RecordsIDs = cursor.fetchall()
+                RecordsIDs = [str(record[0]) for record in RecordsIDs]
+            else:
                 print("No In Production orders available for Shipped.")
                 return
             headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
             print(tabulate(Records, headers=headers, tablefmt="grid"))
             Order_ID=input('Enter order id to be shipped:')
-            cursor.execute("UPDATE customer_orders SET Shipped = 'Yes' WHERE OrderID = ?", (Order_ID,))
-            conn.commit()
-            print('-----------------------------------------')
-            print(f" Order {Order_ID} is Successfully Shipped! ")
-            print('-----------------------------------------')
+            if Order_ID in RecordsIDs:
+                cursor.execute("UPDATE customer_orders SET Shipped = 'Yes' WHERE OrderID = ?", (Order_ID,))
+                conn.commit()
+                print('-----------------------------------------')
+                print(f" Order {Order_ID} is Successfully Shipped! ")
+                print('-----------------------------------------')
+            else:
+                print('------------------')
+                print('Id does not exists')
+                print('------------------')
 
         except sqlite3.Error as e:
                 print(f"An error occurred: {e}")
@@ -356,19 +365,30 @@ def Order_Closed():
         try:
             conn= sqlite3.connect('POPS.db')
             cursor = conn.cursor()
-            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes'")
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'In Production'")
             Records = cursor.fetchall()
-            if not Records:
+            if Records:
+                cursor.execute(" SELECT OrderID FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'In Production'")
+                RecordsIDs = cursor.fetchall()
+                RecordsIDs = [str(record[0]) for record in RecordsIDs]
+            else:
                 print("No Shipped orders available to close order.")
                 return
             headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
             print(tabulate(Records, headers=headers, tablefmt="grid"))
+            print(RecordsIDs)
             Order_ID=input('Enter order id to be shipped:')
-            cursor.execute("UPDATE customer_orders SET Status = 'Closed' WHERE OrderID = ?", (Order_ID,))
-            conn.commit()
-            print('-----------------------------------------')
-            print(f" Order {Order_ID} is Successfully Closed! ")
-            print('-----------------------------------------')
+            if Order_ID in RecordsIDs:
+                print('Id Exists.')
+                cursor.execute("UPDATE customer_orders SET Status = 'Closed' WHERE OrderID = ?", (Order_ID,))
+                conn.commit()
+                print('-----------------------------------------')
+                print(f" Order {Order_ID} is Successfully Closed! ")
+                print('-----------------------------------------')
+            else:
+                print('------------------')
+                print('Id does not exists')
+                print('------------------')
 
         except sqlite3.Error as e:
                 print(f"An error occurred: {e}")
