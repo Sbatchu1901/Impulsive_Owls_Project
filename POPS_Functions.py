@@ -376,10 +376,10 @@ def Order_Closed():
                 return
             headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
             print(tabulate(Records, headers=headers, tablefmt="grid"))
-            print(RecordsIDs)
+            
             Order_ID=input('Enter order id to be shipped:')
             if Order_ID in RecordsIDs:
-                print('Id Exists.')
+                
                 cursor.execute("UPDATE customer_orders SET Status = 'Closed' WHERE OrderID = ?", (Order_ID,))
                 conn.commit()
                 print('-----------------------------------------')
@@ -401,6 +401,46 @@ def Order_Closed():
 
 
 def Initiate_Billing():
-    print('')
+        try:
+            conn= sqlite3.connect('POPS.db')
+            cursor = conn.cursor()
+            cursor.execute(" SELECT OrderID, OrderDate, ProductName, Status, Shipped  FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'Closed'")
+            Records = cursor.fetchall()
+            if Records:
+                cursor.execute(" SELECT OrderID FROM customer_orders WHERE Shipped= 'Yes' AND Status= 'Closed'")
+                RecordsIDs = cursor.fetchall()
+                RecordsIDs = [str(record[0]) for record in RecordsIDs]
+            else:
+                print("No Shipped orders available to close order.")
+                return
+            headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
+            print(tabulate(Records, headers=headers, tablefmt="grid"))
+            
+            Order_ID=input('Enter order id to initiate bill:')
+            if Order_ID in RecordsIDs:
+                cursor.execute("SELECT ProductName FROM customer_orders WHERE OrderID=?",(Order_ID,))
+                product_Name = cursor.fetchone()[0]
+                cursor.execute("SELECT Quantity FROM customer_orders WHERE OrderID=?",(Order_ID,))
+                Quantity = cursor.fetchone()[0]
+                cursor.execute("SELECT Price_per_unit FROM Inventory WHERE LOWER(ProductName) = LOWER(?)", (product_Name,))
+                price = cursor.fetchone()[0]
+
+                print(price)
+            
+                print('-----------------------------------------')
+                print(f" Order {Order_ID} is Successfully Bill initiated! ")
+                print('-----------------------------------------')
+            else:
+                print('------------------')
+                print('Id does not exists')
+                print('------------------')
+
+        except sqlite3.Error as e:
+                print(f"An error occurred: {e}")
+            
+        finally:
+                if conn:
+                    conn.close()
+
 
 
