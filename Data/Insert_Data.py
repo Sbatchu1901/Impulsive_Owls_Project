@@ -16,7 +16,7 @@ def insert_data_into_tables(db):
             conn = sqlite3.connect(db)
             cursor = conn.cursor()
             cursor.execute('INSERT INTO Inventory (ProductName, productStock, Price_per_unit) VALUES (?, ?, ?)'
-                , (product_Name,product_stock))
+                , (product_Name,product_stock, price))
             conn.commit()
             print("Data inserted successfully into inventory table.")
         
