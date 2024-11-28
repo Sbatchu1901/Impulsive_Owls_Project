@@ -357,6 +357,7 @@ def Schedule_and_UpdateStatus():
                 if stock and stock[0] < order_quantity:
                     print('----------------------------------')
                     print(f'Provided order {Order_Id} is Out of Stock.')
+
                     print(' ')
                     print('Unable to schedule the order.')
                     print('-----------------------------')
@@ -444,6 +445,7 @@ def Order_Shipped():
                 RecordsIDs = cursor.fetchall()
                 RecordsIDs = [str(record[0]) for record in RecordsIDs]
             else:
+                print('----------------------------------------------')
                 print("No In Production orders available for Shipped.")
                 return
             headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
@@ -482,6 +484,7 @@ def Order_Closed():
                 RecordsIDs = cursor.fetchall()
                 RecordsIDs = [str(record[0]) for record in RecordsIDs]
             else:
+                print('-------------------------------------------')
                 print("No Shipped orders available to close order.")
                 return
             headers = ['Order ID', 'Order Date', 'Product Name',  'Status', 'Shipped']
