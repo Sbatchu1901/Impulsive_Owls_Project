@@ -85,8 +85,8 @@ while not outer_Break:
                     print('C for update order status to closed.')
                     print('I for initiate the billing process.')
                     print('B for Back to menu.')
-                    print('---------------------------------')
-                    Read_Order=input('Enter R or O or V or S or B: ')
+                    print('---------------------------------') 
+                    Read_Order=input('Enter R or O or V or S or U or C or I or B: ')
                     if Read_Order is not None and Read_Order and Read_Order in 'rR':
                         POPS_Functions.warehouse_Manager()
                     elif Read_Order is not None and Read_Order and Read_Order in 'oO':

@@ -4,15 +4,46 @@ from tabulate import tabulate
 import pandas as pd
 import datetime
 from datetime import date
+import re
 
 def Register_Customer():
     try:
-        print('------------------')
-        Customer_Name=input('Customer Name:')
-        print('------------------')
-        Customer_Phone=input('Customer Phone:')
-        print('------------------')
-        Customer_Email=input('Customer Email:')
+        while True:
+            print('------------------')
+            Customer_Name = input('Customer Name:')
+            if not Customer_Name or Customer_Name.strip() == "":
+                print("SORRY! Customer name cannot be empty.")
+            elif any(char.isdigit() for char in Customer_Name):
+                print("SORRY! Customer name cannot contain numeric characters.")
+            else:
+                break
+        
+        
+        
+        while True:
+            print('------------------')
+            Customer_Phone = input('Customer Phone:')
+            if not Customer_Phone or Customer_Phone.strip() == "":
+                print("SORRY! Phone number cannot be empty.")
+            elif not Customer_Phone.isdigit():
+                print("SORRY! Phone number must contain only numeric characters.")
+            elif len(Customer_Phone) != 10:
+                print("SORRY! Phone number must be exactly 10 digits.")
+            else:
+                break
+        
+        
+        
+        while True:
+            print('------------------')
+            Customer_Email = input('Customer Email:')
+            email_pattern = r"^[a-zA-Z0-9._%+-]+@(gmail|yahoo|[a-zA-Z0-9.-]+)\.com$"
+            if not Customer_Email or Customer_Email.strip() == "":
+                print("SORRY! Email cannot be empty.")
+            elif not re.match(email_pattern, Customer_Email):
+                print("SORRY! Invalid email format.")
+            else:
+                break
         conn= sqlite3.connect('POPS.db')
         cursor = conn.cursor()
         cursor.execute('INSERT INTO customer (CustomerName, CustomerPhone, CustomerEmail) VALUES (?,?,?)',
@@ -41,14 +72,54 @@ def Customer_Order():
 
         print(tabulate(rows, headers=headers, tablefmt="grid"))
 
-        print('------------------')
-        Product_Name=input('Product Name:')
-        print('------------------')
-        Order_Quantity=input('Order Quantity:')
-        print('------------------')
-        CustomerID=input('Customer ID:')
-        print('------------------')
-        Shipping_Address=input('Shipping Address:')
+        while True:
+            print('------------------')
+            Product_Name = input('Product Name:')
+            if not Product_Name or Product_Name.strip() == "":
+                print("SORRY! Product name cannot be empty.")
+            else:
+                formatted_input = Product_Name.replace(" ", "").lower()
+                cursor.execute('SELECT ProductName FROM Inventory')
+                rows = cursor.fetchall()
+
+                product_names = [row[0].replace(" ", "").lower() for row in rows]
+                
+                if formatted_input in product_names:
+                    break
+                else:
+                    print("SORRY! Product name does not match any product in the inventory.")
+        
+        while True:
+            print('------------------')
+            Order_Quantity = input('Order Quantity:')
+            if not Order_Quantity or Order_Quantity.strip() == "":
+                print("SORRY! Order quantity cannot be empty.")
+            elif not Order_Quantity.isdigit():
+                print("SORRY! Order quantity must be a numeric value.")
+            else:
+                break
+        
+        while True:
+            print('------------------')
+            CustomerID = input('Customer ID:')
+            if not CustomerID or CustomerID.strip() == "":
+                print("SORRY! Customer ID cannot be empty.")
+            elif not CustomerID.isdigit():
+                print("SORRY! Customer ID must be numeric.")
+            else:
+                cursor.execute('SELECT CustomerID FROM customer WHERE CustomerID = ?', (CustomerID,))
+                if cursor.fetchone():
+                    break
+                else:
+                    print("SORRY! Customer ID does not exist in the customer database.")
+        while True:
+            print('------------------')
+            Shipping_Address = input('Shipping Address:')
+            if not Shipping_Address or Shipping_Address.strip() == "":
+                print("SORRY! Shipping address cannot be empty.")
+            else:
+                break
+        
         Status='Open'
         Shipped='No'
         Order_Date=date.today()
@@ -85,7 +156,7 @@ def Assigned_Orders():
             print('   ')
             print('   ')
             print('List of Orders:')
-            cursor.execute('SELECT * FROM customer_orders where Status=?',('Open',))
+            cursor.execute('SELECT * FROM customer_orders where Status=? AND Shipped=?',('Open','No'))
             rows = cursor.fetchall()
             headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
 
@@ -103,9 +174,9 @@ def Assigned_Orders():
 
             OrderIs=input('Order ID is:')
             
-            cursor.execute('SELECT OrderID from customer_orders where OrderID=?',(OrderIs,))
-            Order_ID = cursor.fetchone()
-            if Order_ID is not None and int(Order_ID[0]) == int(OrderIs):
+            cursor.execute('SELECT OrderID FROM customer_orders where Status=? AND Shipped=?',('Open','No'))
+            Order_ID = [str(row[0]) for row in cursor.fetchall()]
+            if Order_ID is not None and OrderIs in Order_ID:
                 AssignedTo=input('Assigned to sales person ID:')
                 cursor.execute('SELECT SalesPersonID from SalesPersons where SalesPersonID=?',(AssignedTo,))
                 salespersonID = cursor.fetchone()
