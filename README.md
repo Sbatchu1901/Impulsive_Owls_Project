@@ -1,4 +1,5 @@
 # Impulsive_Owls_Project
 Required prerequesites to install
-pip install pandas
-pip install tabulate
+
+1) pip install pandas
+2) pip install tabulate
