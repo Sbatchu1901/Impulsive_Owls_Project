@@ -111,7 +111,7 @@ def Customer_Order():
                 if cursor.fetchone():
                     break
                 else:
-                    print("SORRY! Customer ID does not exist in the customer database.")
+                    print(f"SORRY! Customer ID {CustomerID} does not exist in the customer database.")
         while True:
             print('------------------')
             Shipping_Address = input('Shipping Address:')
@@ -178,7 +178,7 @@ def Assigned_Orders():
             orderss = cursor.fetchone()
             if orderss:
                 print('-------------------------------------------------------')
-                print(f"Provided order {OrderIs} is already assigned to salesperson.")
+                print(f"Provided order ID {OrderIs} is already assigned to salesperson.")
                 print('-------------------------------------------------------')
                 continue
 
@@ -229,8 +229,8 @@ def warehouse_Manager():
         headers=['Order ID', 'Order Date', 'Product Name', 'Quantity','Customer ID','Shipping Address','Status','Shipped','Remarks']
         print(tabulate(pd.DataFrame(rows, columns=headers),headers='keys',tablefmt='grid',showindex=False))
         if not rows:
-         print('No  orders found.')
-         return
+            print('No  orders found.')
+            return
     
     except sqlite3 as e:
         print('No orders found.')
@@ -284,7 +284,7 @@ def Verify_stock():
             product_name = order[2]
             required_quantity = order[3]
 
-            cursor.execute("SELECT productStock FROM Inventory WHERE LOWER(ProductName) = LOWER(?)", (product_name,))
+            cursor.execute("SELECT productStock FROM Inventory WHERE LOWER(REPLACE(ProductName,' ','')) = LOWER(REPLACE(?,' ',''))", (product_name,))
             stock = cursor.fetchone()
 
             if stock and stock[0] >= required_quantity:
@@ -306,7 +306,8 @@ def Verify_stock():
         print('Orders with Insufficient Stock:')
         print('-------------------------------')
         if insufficient_inventory:
-            print(tabulate(pd.DataFrame(insufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
+                print(tabulate(pd.DataFrame(insufficient_inventory, columns=headers), headers='keys', tablefmt='grid', showindex=False))
+               
         else:
             print('No orders with insufficient Stock.')
 
@@ -339,12 +340,30 @@ def Schedule_and_UpdateStatus():
         
         while True:
             try:
-                Order_Id = int(input("Enter Order ID to assign the job: "))
+                Order_Id = int(input("Enter Order ID to schedule the job: "))
                 cursor.execute("SELECT * FROM customer_orders WHERE OrderID = ? AND Status = 'Open'", (Order_Id,))
                 order = cursor.fetchone()
                 if not order:
-                    print(f"No open order found with ID {Order_Id}. Please enter a valid Order ID.")
+                    print(f"No order found with ID {Order_Id}. Please enter a valid Order ID.")
                     continue
+                cursor.execute("SELECT Quantity, ProductName FROM customer_orders WHERE OrderID = ? AND Status = 'Open'", (Order_Id,))
+                order = cursor.fetchone()
+                order_quantity=order[0]
+                product_name=order[1]
+
+                cursor.execute("SELECT productStock FROM Inventory WHERE LOWER(REPLACE(ProductName,' ','')) = LOWER(REPLACE(?,' ',''))", (product_name,))
+                stock = cursor.fetchone()
+
+                if stock and stock[0] < order_quantity:
+                    print('----------------------------------')
+                    print(f'Provided order {Order_Id} is Out of Stock.')
+                    print(' ')
+                    print('Unable to schedule the order.')
+                    print('-----------------------------')
+                    
+                    continue
+                
+    
                 cursor.execute("SELECT OrderID FROM Assigned_Orders WHERE OrderID = ?", (Order_Id,))
                 orderss = cursor.fetchone()
                 if not orderss:
@@ -525,7 +544,7 @@ def Initiate_Billing():
                 print('--------------------')
                 print(f'Grand Total: ${grand_total:.2f}')            
                 print('-----------------------------------------')
-                print(f" Order {Order_ID} is Successfully Bill initiated! ")
+                print(f" Order {Order_ID} bill is successfully initiated! ")
                 print('-----------------------------------------')
                 print(f'Bill Amount is {grand_total:.2f}')
             else:
