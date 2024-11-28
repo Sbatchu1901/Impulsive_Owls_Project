@@ -174,6 +174,14 @@ def Assigned_Orders():
 
             OrderIs=input('Order ID is:')
             
+            cursor.execute("SELECT OrderID FROM Assigned_Orders WHERE OrderID = ?", (OrderIs,))
+            orderss = cursor.fetchone()
+            if orderss:
+                print('-------------------------------------------------------')
+                print(f"Provided order {OrderIs} is already assigned to salesperson.")
+                print('-------------------------------------------------------')
+                continue
+
             cursor.execute('SELECT OrderID FROM customer_orders where Status=? AND Shipped=?',('Open','No'))
             Order_ID = [str(row[0]) for row in cursor.fetchall()]
             if Order_ID is not None and OrderIs in Order_ID:
@@ -337,6 +345,18 @@ def Schedule_and_UpdateStatus():
                 if not order:
                     print(f"No open order found with ID {Order_Id}. Please enter a valid Order ID.")
                     continue
+                cursor.execute("SELECT OrderID FROM Assigned_Orders WHERE OrderID = ?", (Order_Id,))
+                orderss = cursor.fetchone()
+                if not orderss:
+                    print('-----------------------------------------------------------------------')
+                    print(f"Provided order {Order_Id} is not yet assigned to salesperson by clerk.")
+                    print(' ')
+                    print('Please wait till order is assigned to sales person.')
+                    print(' ')
+                    print(f'Or contact to clerk regarding order {Order_Id} issue.')
+                    print('-----------------------------------------------------------')
+                    continue
+
                 break
             except ValueError:
                 print("Invalid input. Please enter a numeric Order ID.")
